@@ -105,6 +105,7 @@ export default function App() {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Website Content State
   const [content, setContent] = useState<any>({
@@ -156,8 +157,10 @@ export default function App() {
       if (snapshot.exists()) {
         setContent(snapshot.data());
       }
+      setIsLoading(false); // Content loaded, ready to show
     }, (error) => {
       handleFirestoreError(error, OperationType.GET, "settings/content");
+      setIsLoading(false); // Still stop loading to show something even on error
     });
 
     return () => {
@@ -251,6 +254,23 @@ export default function App() {
       handleFirestoreError(error, OperationType.DELETE, `gallery/${imgId}`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-[#FDFCFB] flex-col gap-6">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-[#3B4D1C]/20 border-t-[#3B4D1C] rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+             <Home className="w-5 h-5 text-[#3B4D1C]" />
+          </div>
+        </div>
+        <div className="text-center px-6">
+          <p className="text-[#3B4D1C] font-semibold tracking-[0.4em] text-xs uppercase animate-pulse">Malhar Homestay</p>
+          <p className="text-[#3B4D1C]/40 text-[10px] mt-2 font-medium tracking-wide">Authenticity in every breath...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] text-[#2D2D2D] selection:bg-[#DEE7CE] selection:text-[#3B4D1C]">
