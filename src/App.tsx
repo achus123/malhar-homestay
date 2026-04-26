@@ -121,7 +121,8 @@ export default function App() {
     contactPhone: CONTACT_PHONE,
     locationText: "Panathady, near Ranipuram\nKasaragod, Kerala\nIndia",
     bestTimeTitle: "Best Time to Visit",
-    bestTimeDescription: "The Western Ghats are magical year-round, but the period during and after the monsoon (June to October) is when the greenery is at its peak."
+    bestTimeDescription: "The Western Ghats are magical year-round, but the period during and after the monsoon (June to October) is when the greenery is at its peak.",
+    logoUrl: "/input_file_0.png"
   });
 
   const [editContent, setEditContent] = useState<any>(null);
@@ -261,7 +262,11 @@ export default function App() {
         <div className="relative">
           <div className="w-16 h-16 border-4 border-[#3B4D1C]/20 border-t-[#3B4D1C] rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-             <Home className="w-5 h-5 text-[#3B4D1C]" />
+             {content.logoUrl ? (
+               <img src={content.logoUrl} alt="Logo" className="w-6 h-6 object-contain" />
+             ) : (
+               <Home className="w-5 h-5 text-[#3B4D1C]" />
+             )}
           </div>
         </div>
         <div className="text-center px-6">
@@ -277,19 +282,24 @@ export default function App() {
       {/* Admin Toggle Hidden in 'M' */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-[#3B4D1C]/10">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span 
-              className="text-xl font-bold tracking-tight text-[#3B4D1C] select-none"
-            >
+          <div className="flex items-center gap-3">
+            {content.logoUrl && (
+              <img src={content.logoUrl} alt="Logo" className="w-10 h-10 object-contain" />
+            )}
+            <div className="flex items-center gap-1.5">
               <span 
-                className="cursor-pointer hover:opacity-70 transition-opacity active:scale-95 inline-block"
-                onClick={handleMClick}
+                className="text-xl font-bold tracking-tight text-[#3B4D1C] select-none"
               >
-                M
+                <span 
+                  className="cursor-pointer hover:opacity-70 transition-opacity active:scale-95 inline-block"
+                  onClick={handleMClick}
+                >
+                  M
+                </span>
+                ALHAR
               </span>
-              ALHAR
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-60 translate-y-0.5">Homestay</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-60 translate-y-0.5">Homestay</span>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-4 lg:gap-8 text-sm font-medium">
             <a href="#about" className="hover:text-[#3B4D1C] transition-colors">About</a>
@@ -428,6 +438,7 @@ export default function App() {
                   <span className="text-[10px] font-bold text-[#3B4D1C]/60 uppercase ml-1">Main Images</span>
                   <div className="grid grid-cols-1 gap-4">
                     {[
+                      { label: "Website Logo", field: "logoUrl" },
                       { label: "Hero Banner", field: "heroUrl" },
                       { label: "Bedroom", field: "bedroomUrl" },
                       { label: "Balcony", field: "balconyUrl" }
@@ -814,9 +825,14 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-6">
-                <span className="text-2xl font-bold tracking-tight text-white">MALHAR</span>
-                <span className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-60 translate-y-0.5">Homestay</span>
+              <div className="flex items-center gap-3 mb-6">
+                {content.logoUrl && (
+                  <img src={content.logoUrl} alt="Logo" className="w-12 h-12 object-contain brightness-0 invert" />
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-bold tracking-tight text-white">MALHAR</span>
+                  <span className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-60 translate-y-0.5">Homestay</span>
+                </div>
               </div>
               <p className="max-w-xs text-sm leading-relaxed mb-6 opacity-60">
                 A serene, eco-friendly homestay experience in the heart of Ranipuram, Kerala. Embracing nature, one guest at a time.
