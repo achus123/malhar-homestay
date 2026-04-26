@@ -1,0 +1,83 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isEmailVerified() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) || 
+        request.auth.token.email == "xenozhd5@gmail.com"
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Validation Helpers ---
+
+    function isValidGalleryImage(data) {
+      return data.keys().hasAll(['src', 'createdAt']) &&
+             data.keys().size() <= 4 &&
+             data.src is string && data.src.size() > 0 && data.src.size() <= 2048 &&
+             data.createdAt == request.time &&
+             (!data.keys().contains('fallback') || (data.fallback is string && data.fallback.size() <= 2048));
+    }
+
+    // --- Collection Rules ---
+
+    // Admins Collection
+    match /admins/{uid} {
+      allow get: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow write: if isAdmin(); 
+    }
+
+    // Gallery Collection - Updated to support PIN-only access (public writes)
+    match /gallery/{imageId} {
+      allow list: if true;
+      allow get: if true;
+      
+      // Note: In production, we'd use Auth. Removing per user request to simplify.
+      allow create: if isValidId(imageId) && 
+                    isValidGalleryImage(incoming());
+      
+      allow delete: if isValidId(imageId);
+      
+      allow update: if false; 
+    }
+
+    // Settings Collection
+    match /settings/{docId} {
+      allow get: if true;
+      allow write: if true; // In production, restrict to authenticated admins
+    }
+
+    // Test collection for connection health checks
+    match /test/connection {
+      allow get: if true;
+    }
+  }
+}

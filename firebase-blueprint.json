@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "Admin User",
+      "description": "A user with administrative privileges.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin"] }
+      },
+      "required": ["email", "role"]
+    },
+    "GalleryImage": {
+      "title": "Gallery Image",
+      "description": "An image displayed in the homestay gallery.",
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "description": "The URL of the image."
+        },
+        "fallback": {
+          "type": "string",
+          "description": "A fallback URL if the primary image fails to load."
+        },
+        "order": {
+          "type": "number",
+          "description": "The display order of the image."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the image was added."
+        }
+      },
+      "required": ["src", "createdAt"]
+    }
+  },
+  "firestore": {
+    "gallery": {
+      "schema": "GalleryImage",
+      "description": "Collection of gallery images."
+    },
+    "admins": {
+      "schema": "AdminUser",
+      "description": "Collection of administrative users. The document ID is the user's UID."
+    }
+  }
+}
